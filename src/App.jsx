@@ -5,6 +5,7 @@ import ImportExcel from './components/ImportExcel'
 import DataTable from './components/DataTable'
 import FormPenjualan from './components/FormPenjualan'
 import ProdukForm from './components/ProdukForm'
+import Footer from './components/Footer'
 import { 
   calculateStatistics, 
   getChartDataByBulan, 
@@ -213,6 +214,8 @@ function App() {
           {notification.message}
         </div>
       )}
+
+      <Footer />
     </div>
   )
 }

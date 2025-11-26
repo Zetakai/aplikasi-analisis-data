@@ -116,14 +116,13 @@ function DataTable({ data, filter, onFilterChange, onEdit, onDelete }) {
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        if (item.id) {
+                        if (item && item.id) {
                           onDelete(item.id)
-                        } else {
-                          console.error('Delete: Item has no ID', item)
                         }
                       }}
                       className={styles.btnDelete}
                       title="Hapus"
+                      aria-label="Hapus data"
                     >
                       🗑️
                     </button>
