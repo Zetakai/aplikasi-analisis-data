@@ -72,3 +72,96 @@ export function getChartDataByKategori(data) {
     .sort((a, b) => b.total - a.total)
 }
 
+export function getTopProducts(data, limit = 5) {
+  const productMap = {}
+  
+  data.forEach(item => {
+    const nama = item.namaProduk || 'Tidak Diketahui'
+    if (!productMap[nama]) {
+      productMap[nama] = { 
+        nama, 
+        total: 0, 
+        jumlah: 0,
+        kategori: item.kategori || ''
+      }
+    }
+    productMap[nama].total += item.jumlah * item.harga
+    productMap[nama].jumlah += item.jumlah
+  })
+
+  return Object.values(productMap)
+    .sort((a, b) => b.total - a.total)
+    .slice(0, limit)
+}
+
+export function getKategoriTrendByBulan(data) {
+  const bulanOrder = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ]
+
+  const kategoriSet = new Set()
+  const bulanMap = {}
+
+  data.forEach(item => {
+    const bulan = item.bulan || 'Tidak Diketahui'
+    const kategori = item.kategori || 'Tidak Diketahui'
+    kategoriSet.add(kategori)
+
+    if (!bulanMap[bulan]) {
+      bulanMap[bulan] = {}
+    }
+    if (!bulanMap[bulan][kategori]) {
+      bulanMap[bulan][kategori] = 0
+    }
+    bulanMap[bulan][kategori] += item.jumlah * item.harga
+  })
+
+  const result = []
+  const sortedBulan = Object.keys(bulanMap).sort((a, b) => {
+    const indexA = bulanOrder.indexOf(a)
+    const indexB = bulanOrder.indexOf(b)
+    if (indexA === -1 && indexB === -1) return a.localeCompare(b)
+    if (indexA === -1) return 1
+    if (indexB === -1) return -1
+    return indexA - indexB
+  })
+
+  sortedBulan.forEach(bulan => {
+    const entry = { bulan }
+    kategoriSet.forEach(kategori => {
+      entry[kategori] = bulanMap[bulan][kategori] || 0
+    })
+    result.push(entry)
+  })
+
+  return { data: result, categories: Array.from(kategoriSet) }
+}
+
+export function calculateGrowthRate(data) {
+  if (!data || data.length < 2) return 0
+
+  const bulanOrder = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ]
+
+  const bulanData = getChartDataByBulan(data)
+  if (bulanData.length < 2) return 0
+
+  const sorted = [...bulanData].sort((a, b) => {
+    const indexA = bulanOrder.indexOf(a.bulan)
+    const indexB = bulanOrder.indexOf(b.bulan)
+    if (indexA === -1 && indexB === -1) return 0
+    if (indexA === -1) return 1
+    if (indexB === -1) return -1
+    return indexA - indexB
+  })
+
+  const latest = sorted[sorted.length - 1].total
+  const previous = sorted[sorted.length - 2].total
+
+  if (previous === 0) return 0
+  return ((latest - previous) / previous) * 100
+}
+

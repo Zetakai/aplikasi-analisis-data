@@ -1,7 +1,10 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, ComposedChart
+} from 'recharts'
 import styles from '../styles/Dashboard.module.css'
 
-function Dashboard({ stats, chartDataBulan, chartDataKategori }) {
+function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kategoriTrend, growthRate }) {
   const formatCurrency = (value) => {
     if (value >= 1000000) {
       return `${(value / 1000000).toFixed(1)}M`
@@ -9,6 +12,21 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori }) {
       return `${(value / 1000).toFixed(1)}K`
     }
     return value.toString()
+  }
+
+  const formatCurrencyCompact = (value) => {
+    if (value >= 1000000000) {
+      return `Rp ${(value / 1000000000).toFixed(1)}M`
+    } else if (value >= 1000000) {
+      return `Rp ${(value / 1000000).toFixed(1)}jt`
+    } else if (value >= 1000) {
+      return `Rp ${(value / 1000).toFixed(0)}rb`
+    }
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(value)
   }
 
   const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
@@ -31,11 +49,7 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori }) {
         <div className={styles.statCard}>
           <div className={styles.statLabel}>Rata-rata per Transaksi</div>
           <div className={styles.statValue}>
-            {new Intl.NumberFormat('id-ID', {
-              style: 'currency',
-              currency: 'IDR',
-              minimumFractionDigits: 0
-            }).format(stats.rataRata)}
+            {formatCurrencyCompact(stats.rataRata)}
           </div>
         </div>
 
@@ -73,10 +87,91 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori }) {
       </div>
 
       {chartDataBulan && chartDataBulan.length > 0 && (
+        <>
+          <div className={styles.chartSection}>
+            <div className={styles.chartHeader}>
+              <h3 className={styles.chartTitle}>Tren Penjualan Bulanan</h3>
+              {growthRate !== 0 && (
+                <span className={`${styles.growthBadge} ${growthRate > 0 ? styles.positive : styles.negative}`}>
+                  {growthRate > 0 ? '↑' : '↓'} {Math.abs(growthRate).toFixed(1)}%
+                </span>
+              )}
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartDataBulan}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="bulan" />
+                <YAxis tickFormatter={formatCurrency} />
+                <Tooltip 
+                  formatter={(value) => new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                  }).format(value)}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="total" 
+                  stroke="#2563eb" 
+                  strokeWidth={3}
+                  name="Total Penjualan"
+                  dot={{ fill: '#2563eb', r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className={styles.chartSection}>
+            <h3 className={styles.chartTitle}>Penjualan per Bulan (Bar Chart)</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartDataBulan}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="bulan" />
+                <YAxis tickFormatter={formatCurrency} />
+                <Tooltip 
+                  formatter={(value) => new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                  }).format(value)}
+                />
+                <Legend />
+                <Bar dataKey="total" fill="#2563eb" name="Total Penjualan" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
+
+      {topProducts && topProducts.length > 0 && (
         <div className={styles.chartSection}>
-          <h3 className={styles.chartTitle}>Penjualan per Bulan</h3>
+          <h3 className={styles.chartTitle}>Top 5 Produk Terlaris</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartDataBulan}>
+            <BarChart data={topProducts} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" tickFormatter={formatCurrency} />
+              <YAxis dataKey="nama" type="category" width={150} />
+              <Tooltip 
+                formatter={(value) => new Intl.NumberFormat('id-ID', {
+                  style: 'currency',
+                  currency: 'IDR',
+                  minimumFractionDigits: 0
+                }).format(value)}
+              />
+              <Legend />
+              <Bar dataKey="total" fill="#10b981" name="Total Penjualan" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {kategoriTrend && kategoriTrend.data.length > 0 && kategoriTrend.categories.length > 0 && (
+        <div className={styles.chartSection}>
+          <h3 className={styles.chartTitle}>Tren Penjualan per Kategori</h3>
+          <ResponsiveContainer width="100%" height={350}>
+            <AreaChart data={kategoriTrend.data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="bulan" />
               <YAxis tickFormatter={formatCurrency} />
@@ -88,15 +183,25 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori }) {
                 }).format(value)}
               />
               <Legend />
-              <Bar dataKey="total" fill="#2563eb" name="Total Penjualan" />
-            </BarChart>
+              {kategoriTrend.categories.map((kategori, index) => (
+                <Area
+                  key={kategori}
+                  type="monotone"
+                  dataKey={kategori}
+                  stackId="1"
+                  stroke={COLORS[index % COLORS.length]}
+                  fill={COLORS[index % COLORS.length]}
+                  fillOpacity={0.6}
+                />
+              ))}
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       )}
 
       {chartDataKategori && chartDataKategori.length > 0 && (
         <div className={styles.chartSection}>
-          <h3 className={styles.chartTitle}>Penjualan per Kategori</h3>
+          <h3 className={styles.chartTitle}>Komposisi Penjualan per Kategori</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie

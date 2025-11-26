@@ -4,7 +4,14 @@ import Dashboard from './components/Dashboard'
 import ImportExcel from './components/ImportExcel'
 import DataTable from './components/DataTable'
 import FormPenjualan from './components/FormPenjualan'
-import { calculateStatistics, getChartDataByBulan, getChartDataByKategori } from './utils/statistics'
+import { 
+  calculateStatistics, 
+  getChartDataByBulan, 
+  getChartDataByKategori,
+  getTopProducts,
+  getKategoriTrendByBulan,
+  calculateGrowthRate
+} from './utils/statistics'
 import styles from './styles/App.module.css'
 
 function App() {
@@ -92,6 +99,9 @@ function App() {
   const stats = calculateStatistics(filteredPenjualan)
   const chartDataBulan = getChartDataByBulan(filteredPenjualan)
   const chartDataKategori = getChartDataByKategori(filteredPenjualan)
+  const topProducts = getTopProducts(filteredPenjualan, 5)
+  const kategoriTrend = getKategoriTrendByBulan(filteredPenjualan)
+  const growthRate = calculateGrowthRate(filteredPenjualan)
 
   return (
     <div className={styles.app}>
@@ -101,6 +111,9 @@ function App() {
           stats={stats} 
           chartDataBulan={chartDataBulan}
           chartDataKategori={chartDataKategori}
+          topProducts={topProducts}
+          kategoriTrend={kategoriTrend}
+          growthRate={growthRate}
         />
         
         <section className={styles.section}>

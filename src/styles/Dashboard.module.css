@@ -19,12 +19,24 @@
   gap: 1.5rem;
 }
 
+.statCard:nth-child(2) .statValue {
+  font-size: 1.4rem;
+}
+
+@media (max-width: 1200px) {
+  .statCard:nth-child(2) .statValue {
+    font-size: 1.25rem;
+  }
+}
+
 .statCard {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 1.5rem;
   border-radius: 10px;
   border: 1px solid var(--border);
   transition: all 0.2s;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .statCard:hover {
@@ -45,6 +57,10 @@
   font-weight: 700;
   color: var(--text);
   line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 
 .chartSection {
@@ -53,11 +69,41 @@
   border-top: 1px solid var(--border);
 }
 
+.chartSection:first-of-type {
+  margin-top: 2rem;
+  padding-top: 0;
+  border-top: none;
+}
+
 .chartTitle {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: var(--text);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.growthBadge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.growthBadge.positive {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.growthBadge.negative {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 @media (max-width: 768px) {
