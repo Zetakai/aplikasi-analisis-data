@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from '../styles/FormPenjualan.module.css'
 
-function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
+function FormPenjualan({ produk, penjualan, editingItem, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
     namaProduk: '',
     kategori: '',
@@ -13,6 +13,28 @@ function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
 
   const [errors, setErrors] = useState({})
 
+  // Helper function to format date for input field (YYYY-MM-DD)
+  const formatDateForInput = (dateValue) => {
+    if (!dateValue) return new Date().toISOString().split('T')[0]
+    
+    // If it's already in YYYY-MM-DD format, return as is
+    if (typeof dateValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+      return dateValue
+    }
+    
+    // Try to parse the date
+    try {
+      const date = new Date(dateValue)
+      if (!isNaN(date.getTime())) {
+        return date.toISOString().split('T')[0]
+      }
+    } catch (e) {
+      // If parsing fails, return today's date
+    }
+    
+    return new Date().toISOString().split('T')[0]
+  }
+
   useEffect(() => {
     if (editingItem) {
       setFormData({
@@ -21,8 +43,19 @@ function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
         jumlah: editingItem.jumlah || '',
         harga: editingItem.harga || '',
         bulan: editingItem.bulan || new Date().toLocaleString('id-ID', { month: 'long' }),
-        tanggal: editingItem.tanggal || new Date().toISOString().split('T')[0]
+        tanggal: formatDateForInput(editingItem.tanggal)
       })
+      setErrors({})
+    } else {
+      setFormData({
+        namaProduk: '',
+        kategori: '',
+        jumlah: '',
+        harga: '',
+        bulan: new Date().toLocaleString('id-ID', { month: 'long' }),
+        tanggal: new Date().toISOString().split('T')[0]
+      })
+      setErrors({})
     }
   }, [editingItem])
 
@@ -31,7 +64,9 @@ function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ]
 
-  const kategoriOptions = [...new Set(produk.map(p => p.kategori).filter(Boolean))]
+  const kategoriFromProduk = produk.map(p => p.kategori).filter(Boolean)
+  const kategoriFromPenjualan = penjualan.map(p => p.kategori).filter(Boolean)
+  const kategoriOptions = [...new Set([...kategoriFromProduk, ...kategoriFromPenjualan])]
 
   const validate = () => {
     const newErrors = {}
@@ -62,11 +97,13 @@ function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
 
   const handleProdukChange = (namaProduk) => {
     const selectedProduk = produk.find(p => p.nama === namaProduk)
+    const penjualanItem = penjualan.find(p => p.namaProduk === namaProduk)
+    
     setFormData({
       ...formData,
       namaProduk,
-      kategori: selectedProduk?.kategori || formData.kategori,
-      harga: selectedProduk?.harga || formData.harga
+      kategori: selectedProduk?.kategori || penjualanItem?.kategori || formData.kategori,
+      harga: selectedProduk?.harga || penjualanItem?.harga || formData.harga
     })
   }
 
@@ -80,27 +117,25 @@ function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
 
         <div className={styles.formGroup}>
           <label>Nama Produk</label>
-          {produk.length > 0 ? (
-            <select
-              value={formData.namaProduk}
-              onChange={(e) => handleProdukChange(e.target.value)}
-              className={styles.select}
-              required
-            >
-              <option value="">Pilih Produk</option>
-              {produk.map(p => (
-                <option key={p.id} value={p.nama}>{p.nama}</option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              value={formData.namaProduk}
-              onChange={(e) => setFormData({ ...formData, namaProduk: e.target.value })}
-              className={styles.input}
-              required
-            />
-          )}
+          {(() => {
+            const produkNamesFromPenjualan = [...new Set(penjualan.map(p => p.namaProduk).filter(Boolean))]
+            const allProdukNames = [...new Set([...produk.map(p => p.nama), ...produkNamesFromPenjualan])]
+            
+            // Always use dropdown (select)
+            return (
+              <select
+                value={formData.namaProduk}
+                onChange={(e) => handleProdukChange(e.target.value)}
+                className={styles.select}
+                required
+              >
+                <option value="">Pilih Produk</option>
+                {allProdukNames.map(nama => (
+                  <option key={nama} value={nama}>{nama}</option>
+                ))}
+              </select>
+            )
+          })()}
           {errors.namaProduk && <span className={styles.error}>{errors.namaProduk}</span>}
         </div>
 

@@ -62,8 +62,17 @@ function App() {
   }
 
   const handleDeletePenjualan = (id) => {
-    if (window.confirm('Yakin ingin menghapus data ini?')) {
-      setPenjualan(penjualan.filter(item => item.id !== id))
+    if (!id) {
+      console.error('Delete: No ID provided')
+      return
+    }
+    
+    const confirmed = window.confirm('Yakin ingin menghapus data ini?')
+    if (confirmed) {
+      setPenjualan(prevPenjualan => {
+        const filtered = prevPenjualan.filter(item => item.id !== id)
+        return filtered
+      })
       showNotification('Data penjualan berhasil dihapus')
     }
   }
@@ -79,7 +88,31 @@ function App() {
       id: (Date.now() + index).toString()
     }))
     setPenjualan([...penjualan, ...newData])
-    showNotification(`${newData.length} data berhasil diimport`)
+    
+    const existingProdukNames = new Set(produk.map(p => p.nama.toLowerCase()))
+    const newProduk = []
+    
+    data.forEach(item => {
+      if (item.namaProduk && item.kategori && item.harga) {
+        const namaLower = item.namaProduk.toLowerCase()
+        if (!existingProdukNames.has(namaLower)) {
+          existingProdukNames.add(namaLower)
+          newProduk.push({
+            id: (Date.now() + newProduk.length).toString(),
+            nama: item.namaProduk,
+            kategori: item.kategori,
+            harga: parseFloat(item.harga) || 0
+          })
+        }
+      }
+    })
+    
+    if (newProduk.length > 0) {
+      setProduk([...produk, ...newProduk])
+      showNotification(`${newData.length} data dan ${newProduk.length} produk berhasil diimport`)
+    } else {
+      showNotification(`${newData.length} data berhasil diimport`)
+    }
   }
 
   const handleAddProduk = (data) => {
@@ -155,6 +188,7 @@ function App() {
           {showForm && (
             <FormPenjualan
               produk={produk}
+              penjualan={penjualan}
               editingItem={editingItem}
               onSubmit={editingItem ? handleUpdatePenjualan : handleAddPenjualan}
               onCancel={() => {

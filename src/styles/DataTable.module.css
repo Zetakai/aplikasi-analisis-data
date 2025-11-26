@@ -144,6 +144,9 @@
   transition: all 0.2s;
   font-size: 1.1rem;
   line-height: 1;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .btnEdit:hover {

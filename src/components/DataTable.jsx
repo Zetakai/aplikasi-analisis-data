@@ -100,14 +100,28 @@ function DataTable({ data, filter, onFilterChange, onEdit, onDelete }) {
                 <td>
                   <div className={styles.actions}>
                     <button
-                      onClick={() => onEdit(item)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onEdit(item)
+                      }}
                       className={styles.btnEdit}
                       title="Edit"
                     >
                       ✏️
                     </button>
                     <button
-                      onClick={() => onDelete(item.id)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (item.id) {
+                          onDelete(item.id)
+                        } else {
+                          console.error('Delete: Item has no ID', item)
+                        }
+                      }}
                       className={styles.btnDelete}
                       title="Hapus"
                     >
