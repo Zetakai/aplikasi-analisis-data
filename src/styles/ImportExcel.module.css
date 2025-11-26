@@ -1,110 +1,30 @@
-.importSection {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: var(--surface-light);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-.importControls {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
 .fileInputLabel {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: var(--surface);
-  border: 2px dashed var(--border);
-  border-radius: 8px;
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
-  font-weight: 500;
-  color: var(--text);
+  font-weight: 600;
+  color: white;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .fileInputLabel:hover {
-  border-color: var(--primary);
-  background: rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 .fileInput {
   display: none;
 }
 
-.btnSecondary {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.95rem;
-}
-
-.btnSecondary:hover {
-  background: var(--surface-light);
-  border-color: var(--primary);
-}
-
-.produkForm {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: var(--surface);
-  border-radius: 8px;
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: flex-end;
-}
-
-.produkForm .input {
-  flex: 1;
-  min-width: 150px;
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  transition: border-color 0.2s;
-}
-
-.produkForm .input {
-  background: var(--surface);
-  color: var(--text);
-}
-
-.produkForm .input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
-.produkForm .btnPrimary {
-  white-space: nowrap;
-}
-
 @media (max-width: 768px) {
-  .importControls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .fileInputLabel,
-  .btnSecondary {
+  .fileInputLabel {
     width: 100%;
     text-align: center;
   }
-
-  .produkForm {
-    flex-direction: column;
-  }
-
-  .produkForm .input {
-    width: 100%;
-  }
 }
-

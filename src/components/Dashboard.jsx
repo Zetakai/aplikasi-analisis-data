@@ -32,7 +32,7 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
     }).format(value)
   }
 
-  const COLORS = ['#6366f1', '#06b6d4', '#8b5cf6', '#22c55e', '#f59e0b', '#f43f5e', '#3b82f6', '#a855f7']
+  const COLORS = ['#3b82f6', '#06b6d4', '#14b8a6', '#22c55e', '#f59e0b', '#f43f5e', '#0ea5e9', '#10b981']
   const gridColor = theme === 'dark' ? '#475569' : '#e2e8f0'
   const axisColor = theme === 'dark' ? '#94a3b8' : '#64748b'
 
@@ -123,11 +123,11 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
                 <Line 
                   type="monotone" 
                   dataKey="total" 
-                  stroke="#6366f1" 
+                  stroke="#3b82f6" 
                   strokeWidth={3}
                   name="Total Penjualan"
-                  dot={{ fill: '#6366f1', r: 5 }}
-                  activeDot={{ r: 7, fill: '#818cf8' }}
+                  dot={{ fill: '#3b82f6', r: 5 }}
+                  activeDot={{ r: 7, fill: '#60a5fa' }}
                 />
               </LineChart>
             </ResponsiveContainer>

@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard'
 import ImportExcel from './components/ImportExcel'
 import DataTable from './components/DataTable'
 import FormPenjualan from './components/FormPenjualan'
+import ProdukForm from './components/ProdukForm'
 import { 
   calculateStatistics, 
   getChartDataByBulan, 
@@ -18,6 +19,7 @@ function App() {
   const [penjualan, setPenjualan] = useState([])
   const [produk, setProduk] = useState([])
   const [showForm, setShowForm] = useState(false)
+  const [showProdukForm, setShowProdukForm] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [filter, setFilter] = useState({ search: '', kategori: '', bulan: '' })
   const [notification, setNotification] = useState(null)
@@ -85,6 +87,7 @@ function App() {
     const newData = { ...data, id: newId }
     setProduk([...produk, newData])
     showNotification('Data produk berhasil ditambahkan')
+    setShowProdukForm(false)
   }
 
   const filteredPenjualan = penjualan.filter(item => {
@@ -119,22 +122,35 @@ function App() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2>Data Penjualan</h2>
-            <button 
-              className={styles.btnPrimary}
-              onClick={() => {
-                setEditingItem(null)
-                setShowForm(true)
-              }}
-            >
-              + Tambah Data
-            </button>
+            <div className={styles.actionButtons}>
+              <button 
+                className={styles.btnSecondary}
+                onClick={() => setShowProdukForm(!showProdukForm)}
+              >
+                {showProdukForm ? '✕ Batal' : '+ Tambah Produk'}
+              </button>
+              <button 
+                className={styles.btnSecondary}
+                onClick={() => {
+                  setEditingItem(null)
+                  setShowForm(true)
+                }}
+              >
+                + Tambah Data Penjualan
+              </button>
+              <ImportExcel 
+                onImport={handleImport}
+                produk={produk}
+              />
+            </div>
           </div>
 
-          <ImportExcel 
-            onImport={handleImport}
-            onAddProduk={handleAddProduk}
-            produk={produk}
-          />
+          {showProdukForm && (
+            <ProdukForm
+              onSubmit={handleAddProduk}
+              onCancel={() => setShowProdukForm(false)}
+            />
+          )}
 
           {showForm && (
             <FormPenjualan

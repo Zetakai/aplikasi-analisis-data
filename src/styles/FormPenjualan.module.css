@@ -105,7 +105,16 @@
 .select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.inputWithDatalist {
+  position: relative;
+  width: 100%;
+}
+
+.inputWithDatalist input {
+  width: 100%;
 }
 
 .error {

@@ -31,7 +31,7 @@ function FormPenjualan({ produk, editingItem, onSubmit, onCancel }) {
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ]
 
-  const kategoriOptions = [...new Set(produk.map(p => p.kategori))]
+  const kategoriOptions = [...new Set(produk.map(p => p.kategori).filter(Boolean))]
 
   const validate = () => {
     const newErrors = {}
