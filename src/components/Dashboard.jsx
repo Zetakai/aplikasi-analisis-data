@@ -172,7 +172,26 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ kategori, percent }) => `${kategori} ${(percent * 100).toFixed(0)}%`}
+                    label={({ cx, cy, midAngle, innerRadius, outerRadius, kategori, percent }) => {
+                      const RADIAN = Math.PI / 180
+                      const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+                      const x = cx + radius * Math.cos(-midAngle * RADIAN)
+                      const y = cy + radius * Math.sin(-midAngle * RADIAN)
+                      
+                      return (
+                        <text
+                          x={x}
+                          y={y}
+                          fill={theme === 'dark' ? '#f1f5f9' : '#1e293b'}
+                          textAnchor={x > cx ? 'start' : 'end'}
+                          dominantBaseline="central"
+                          fontSize={12}
+                          fontWeight={500}
+                        >
+                          {`${kategori} ${(percent * 100).toFixed(0)}%`}
+                        </text>
+                      )
+                    }}
                     outerRadius={110}
                     fill="#8884d8"
                     dataKey="total"
@@ -185,8 +204,11 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
                     contentStyle={{ 
                       backgroundColor: 'var(--surface)', 
                       border: '1px solid var(--border)',
-                      borderRadius: '8px'
+                      borderRadius: '8px',
+                      color: 'var(--text)'
                     }}
+                    itemStyle={{ color: 'var(--text)' }}
+                    labelStyle={{ color: 'var(--text)' }}
                     formatter={(value) => new Intl.NumberFormat('id-ID', {
                       style: 'currency',
                       currency: 'IDR',
