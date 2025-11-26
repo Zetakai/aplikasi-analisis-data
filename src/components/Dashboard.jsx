@@ -9,10 +9,12 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
   const { theme } = useTheme()
   
   const formatCurrency = (value) => {
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M`
+    if (value >= 1000000000) {
+      return `${(value / 1000000000).toFixed(1)}M`
+    } else if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(1)}jt`
     } else if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}K`
+      return `${(value / 1000).toFixed(1)}rb`
     }
     return value.toString()
   }

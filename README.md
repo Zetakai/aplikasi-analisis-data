@@ -5,12 +5,14 @@ Aplikasi web profesional untuk menganalisis data penjualan dengan fitur lengkap:
 ## Fitur Utama
 
 1. **Dashboard Interaktif** - Visualisasi data dengan berbagai chart (Line, Bar, Area, Pie)
-2. **Import Data dari Excel** - Upload file Excel dan otomatis memproses data penjualan
-3. **Manajemen Data (CRUD)** - Tambah, edit, dan hapus data penjualan dengan validasi
-4. **Pencarian & Filter** - Cari dan filter data berdasarkan produk, kategori, dan bulan
-5. **Analisis Statistik Real-time** - Total penjualan, rata-rata, growth rate, dan KPI lainnya
-6. **Dark/Light Mode** - Toggle tema dengan preferensi tersimpan (dark mode default)
-7. **Responsif** - Optimal di desktop, tablet, dan mobile
+2. **Import Data dari Excel** - Upload file Excel dan otomatis memproses data penjualan dengan parsing tanggal yang akurat
+3. **Manajemen Data (CRUD)** - Tambah, edit, dan hapus data penjualan dengan validasi lengkap
+4. **Hapus Semua Data** - Fitur untuk menghapus semua data sekaligus dengan konfirmasi
+5. **Manajemen Produk** - Tambah produk terpisah untuk referensi saat input data
+6. **Pencarian & Filter** - Cari dan filter data berdasarkan produk, kategori, dan bulan
+7. **Analisis Statistik Real-time** - Total penjualan, rata-rata, growth rate, dan KPI lainnya
+8. **Dark/Light Mode** - Toggle tema dengan preferensi tersimpan (dark mode default)
+9. **Responsif** - Optimal di desktop, tablet, dan mobile
 
 ## Teknologi
 
@@ -28,7 +30,7 @@ npm install
 npm run dev
 ```
 
-Aplikasi akan berjalan di `http://localhost:3000`
+Aplikasi akan berjalan di `http://localhost:5173` (atau port lain yang ditampilkan di terminal)
 
 ## Struktur Project
 
@@ -39,7 +41,9 @@ src/
 │   ├── Dashboard.jsx    # Dashboard dengan charts
 │   ├── ImportExcel.jsx  # Import file Excel
 │   ├── FormPenjualan.jsx # Form CRUD data
-│   └── DataTable.jsx    # Tabel data dengan filter
+│   ├── DataTable.jsx    # Tabel data dengan filter
+│   ├── ProdukForm.jsx   # Form tambah produk
+│   └── Footer.jsx        # Footer dengan info developer
 ├── contexts/            # React Context
 │   └── ThemeContext.jsx # Theme management (dark/light)
 ├── utils/               # Utility functions
@@ -51,7 +55,9 @@ src/
 │   ├── Dashboard.module.css
 │   ├── ImportExcel.module.css
 │   ├── FormPenjualan.module.css
-│   └── DataTable.module.css
+│   ├── DataTable.module.css
+│   ├── ProdukForm.module.css
+│   └── Footer.module.css
 ├── App.jsx              # Komponen utama
 └── main.jsx             # Entry point
 ```
@@ -109,8 +115,18 @@ Contoh format:
   - Real-time update statistik & chart
   
 - **Hapus Data** - Dengan konfirmasi
-  - Konfirmasi sebelum hapus
+  - Konfirmasi sebelum hapus per item
   - Auto-update setelah hapus
+  
+- **Hapus Semua Data** - Hapus semua data sekaligus
+  - Konfirmasi dengan jumlah item yang akan dihapus
+  - Tindakan tidak dapat dibatalkan
+  - Tombol hanya muncul jika ada data
+
+- **Manajemen Produk** - Tambah produk terpisah
+  - Form khusus untuk menambah produk
+  - Produk otomatis muncul di dropdown saat input penjualan
+  - Produk dari data import juga ditambahkan otomatis
 
 ### 3. Filter & Pencarian
 
@@ -134,8 +150,12 @@ Contoh format:
 - **Auto Mapping** - Deteksi kolom otomatis
   - Mendukung variasi nama kolom
   - Validasi data sebelum import
+- **Parsing Tanggal Cerdas** - Parsing tanggal Excel yang akurat
+  - Mendukung Excel serial date format
+  - Mendukung berbagai format tanggal string
+  - Auto-format ke YYYY-MM-DD
 - **Batch Import** - Import banyak data sekaligus
-- **Manajemen Produk** - Tambah produk untuk referensi
+- **Auto Tambah Produk** - Produk dari import otomatis ditambahkan ke daftar produk
 
 ### 5. Dark/Light Mode
 
@@ -148,8 +168,9 @@ Contoh format:
 ## Desain & UX
 
 ### Color Palette
-- **Primary**: Indigo (#6366f1) dengan gradient ke Purple
-- **Accent**: Cyan (#06b6d4)
+- **Primary**: Blue (#3b82f6) dengan gradient ke Cyan dan Teal
+- **Accent**: Cyan (#06b6d4) dan Teal (#14b8a6)
+- **Gradient Header**: Animated gradient dari Dark Blue ke Cyan
 - **Dark Theme**: Slate dark dengan subtle gradients
 - **Light Theme**: Clean white dengan soft colors
 
@@ -177,10 +198,11 @@ Contoh format:
 1. Import data penjualan dari file Excel yang diterima dari tim
 2. Melihat statistik penjualan secara keseluruhan dan per kategori
 3. Menganalisis tren penjualan dengan chart interaktif
-4. Menambah atau mengedit data penjualan manual jika ada transaksi baru
-5. Mencari data penjualan tertentu berdasarkan produk atau periode
-6. Menghapus data yang salah atau duplikat
-7. Switch antara dark/light mode sesuai preferensi
+4. Menambah produk baru untuk referensi saat input data
+5. Menambah atau mengedit data penjualan manual jika ada transaksi baru
+6. Mencari data penjualan tertentu berdasarkan produk atau periode
+7. Menghapus data yang salah atau duplikat (per item atau semua sekaligus)
+8. Switch antara dark/light mode sesuai preferensi
 
 ## Penggunaan
 
@@ -191,7 +213,7 @@ npm install
 npm run dev
 ```
 
-Aplikasi akan berjalan di `http://localhost:3000`
+Aplikasi akan berjalan di `http://localhost:5173` (atau port lain yang ditampilkan di terminal)
 
 ### Production Build
 
@@ -212,22 +234,6 @@ File hasil build akan ada di folder `dist/`
 4. Data akan muncul di aplikasi
 
 Atau import file `contoh-data-penjualan.csv` (convert ke .xlsx dulu)
-
-## Format Excel untuk Import
-
-File Excel harus memiliki kolom berikut (nama kolom bisa bervariasi):
-- **Nama Produk** / namaProduk / Nama
-- **Kategori** / kategori
-- **Jumlah** / jumlah / Qty
-- **Harga** / harga / Price
-- **Bulan** / bulan / Month (opsional)
-- **Tanggal** / tanggal / Date (opsional)
-
-Contoh format:
-| Nama Produk | Kategori | Jumlah | Harga | Bulan | Tanggal |
-|-------------|----------|--------|-------|-------|---------|
-| Laptop ASUS | Elektronik | 5 | 8000000 | Januari | 2024-01-15 |
-| Mouse Logitech | Elektronik | 20 | 250000 | Februari | 2024-02-10 |
 
 ## KPI yang Diukur
 
@@ -252,6 +258,13 @@ Data disimpan di browser localStorage:
 - Data produk tersimpan otomatis
 - Preferensi theme tersimpan
 - Data tetap ada setelah refresh
+
+## Developer
+
+**Muhammad Farid Zaki**
+
+- GitHub: [@Zetakai](https://github.com/Zetakai)
+- LinkedIn: [mfzaki](https://www.linkedin.com/in/mfzaki/)
 
 ## License
 
