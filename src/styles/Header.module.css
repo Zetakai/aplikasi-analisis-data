@@ -1,8 +1,10 @@
 .header {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--gradient-primary);
   color: white;
-  padding: 2.5rem 2rem;
-  box-shadow: var(--shadow-md);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .container {

@@ -1,8 +1,8 @@
 .importSection {
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: #f8fafc;
-  border-radius: 8px;
+  background: var(--surface-light);
+  border-radius: 12px;
   border: 1px solid var(--border);
 }
 
@@ -27,7 +27,7 @@
 
 .fileInputLabel:hover {
   border-color: var(--primary);
-  background: #f0f7ff;
+  background: rgba(99, 102, 241, 0.1);
 }
 
 .fileInput {
@@ -47,7 +47,7 @@
 }
 
 .btnSecondary:hover {
-  background: #f1f5f9;
+  background: var(--surface-light);
   border-color: var(--primary);
 }
 
@@ -72,10 +72,15 @@
   transition: border-color 0.2s;
 }
 
+.produkForm .input {
+  background: var(--surface);
+  color: var(--text);
+}
+
 .produkForm .input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .produkForm .btnPrimary {

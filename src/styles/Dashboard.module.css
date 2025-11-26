@@ -1,9 +1,10 @@
 .dashboard {
   background: var(--surface);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: 16px;
+  padding: 1.5rem;
   box-shadow: var(--shadow-md);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
 }
 
 .sectionTitle {
@@ -15,8 +16,9 @@
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .statCard:nth-child(2) .statValue {
@@ -30,30 +32,49 @@
 }
 
 .statCard {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  padding: 1.5rem;
-  border-radius: 10px;
+  background: var(--surface-light);
+  padding: 1.25rem;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   min-width: 0;
+  position: relative;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .statCard:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
   border-color: var(--primary);
 }
 
+.statCard:hover::before {
+  opacity: 1;
+}
+
 .statLabel {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--text-light);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .statValue {
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   font-weight: 700;
   color: var(--text);
   line-height: 1.2;
@@ -61,25 +82,40 @@
   overflow-wrap: break-word;
   hyphens: auto;
   max-width: 100%;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .chartSection {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border);
+  background: var(--surface-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.chartSection.fullWidth {
+  grid-column: 1 / -1;
 }
 
 .chartSection:first-of-type {
-  margin-top: 2rem;
-  padding-top: 0;
-  border-top: none;
+  margin-top: 0;
 }
 
 .chartTitle {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   color: var(--text);
+  letter-spacing: -0.02em;
 }
 
 .chartHeader {
@@ -97,32 +133,44 @@
 }
 
 .growthBadge.positive {
-  background: #d1fae5;
-  color: #065f46;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .growthBadge.negative {
-  background: #fee2e2;
-  color: #991b1b;
+  background: rgba(244, 63, 94, 0.2);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+@media (max-width: 1200px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
   .dashboard {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .statsGrid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .statValue {
     font-size: 1.5rem;
   }
 
+  .chartsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .chartSection {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    padding: 1rem;
   }
 }
 

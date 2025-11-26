@@ -29,7 +29,7 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
     }).format(value)
   }
 
-  const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+  const COLORS = ['#6366f1', '#06b6d4', '#8b5cf6', '#22c55e', '#f59e0b', '#f43f5e', '#3b82f6', '#a855f7']
 
   return (
     <section className={styles.dashboard}>
@@ -87,8 +87,8 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
       </div>
 
       {chartDataBulan && chartDataBulan.length > 0 && (
-        <>
-          <div className={styles.chartSection}>
+        <div className={styles.chartsGrid}>
+          <div className={`${styles.chartSection} ${styles.fullWidth}`}>
             <div className={styles.chartHeader}>
               <h3 className={styles.chartTitle}>Tren Penjualan Bulanan</h3>
               {growthRate !== 0 && (
@@ -97,12 +97,17 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
                 </span>
               )}
             </div>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={320}>
               <LineChart data={chartDataBulan}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="bulan" />
-                <YAxis tickFormatter={formatCurrency} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#475569" opacity={0.3} />
+                <XAxis dataKey="bulan" stroke="#94a3b8" />
+                <YAxis tickFormatter={formatCurrency} stroke="#94a3b8" />
                 <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'var(--surface)', 
+                    border: '1px solid var(--border)',
+                    borderRadius: '8px'
+                  }}
                   formatter={(value) => new Intl.NumberFormat('id-ID', {
                     style: 'currency',
                     currency: 'IDR',
@@ -113,120 +118,115 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
                 <Line 
                   type="monotone" 
                   dataKey="total" 
-                  stroke="#2563eb" 
+                  stroke="#6366f1" 
                   strokeWidth={3}
                   name="Total Penjualan"
-                  dot={{ fill: '#2563eb', r: 5 }}
-                  activeDot={{ r: 7 }}
+                  dot={{ fill: '#6366f1', r: 5 }}
+                  activeDot={{ r: 7, fill: '#818cf8' }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          <div className={styles.chartSection}>
-            <h3 className={styles.chartTitle}>Penjualan per Bulan (Bar Chart)</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartDataBulan}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="bulan" />
-                <YAxis tickFormatter={formatCurrency} />
-                <Tooltip 
-                  formatter={(value) => new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 0
-                  }).format(value)}
-                />
-                <Legend />
-                <Bar dataKey="total" fill="#2563eb" name="Total Penjualan" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </>
-      )}
+          {topProducts && topProducts.length > 0 && (
+            <div className={styles.chartSection}>
+              <h3 className={styles.chartTitle}>Top 5 Produk Terlaris</h3>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={topProducts} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" opacity={0.3} />
+                  <XAxis type="number" tickFormatter={formatCurrency} stroke="#94a3b8" />
+                  <YAxis dataKey="nama" type="category" width={140} stroke="#94a3b8" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'var(--surface)', 
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value) => new Intl.NumberFormat('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                      minimumFractionDigits: 0
+                    }).format(value)}
+                  />
+                  <Legend />
+                  <Bar dataKey="total" fill="#06b6d4" name="Total Penjualan" radius={[0, 8, 8, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
-      {topProducts && topProducts.length > 0 && (
-        <div className={styles.chartSection}>
-          <h3 className={styles.chartTitle}>Top 5 Produk Terlaris</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={topProducts} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" tickFormatter={formatCurrency} />
-              <YAxis dataKey="nama" type="category" width={150} />
-              <Tooltip 
-                formatter={(value) => new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0
-                }).format(value)}
-              />
-              <Legend />
-              <Bar dataKey="total" fill="#10b981" name="Total Penjualan" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
+          {chartDataKategori && chartDataKategori.length > 0 && (
+            <div className={styles.chartSection}>
+              <h3 className={styles.chartTitle}>Komposisi Kategori</h3>
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie
+                    data={chartDataKategori}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ kategori, percent }) => `${kategori} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={110}
+                    fill="#8884d8"
+                    dataKey="total"
+                  >
+                    {chartDataKategori.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'var(--surface)', 
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value) => new Intl.NumberFormat('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                      minimumFractionDigits: 0
+                    }).format(value)}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
-      {kategoriTrend && kategoriTrend.data.length > 0 && kategoriTrend.categories.length > 0 && (
-        <div className={styles.chartSection}>
-          <h3 className={styles.chartTitle}>Tren Penjualan per Kategori</h3>
-          <ResponsiveContainer width="100%" height={350}>
-            <AreaChart data={kategoriTrend.data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="bulan" />
-              <YAxis tickFormatter={formatCurrency} />
-              <Tooltip 
-                formatter={(value) => new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0
-                }).format(value)}
-              />
-              <Legend />
-              {kategoriTrend.categories.map((kategori, index) => (
-                <Area
-                  key={kategori}
-                  type="monotone"
-                  dataKey={kategori}
-                  stackId="1"
-                  stroke={COLORS[index % COLORS.length]}
-                  fill={COLORS[index % COLORS.length]}
-                  fillOpacity={0.6}
-                />
-              ))}
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {chartDataKategori && chartDataKategori.length > 0 && (
-        <div className={styles.chartSection}>
-          <h3 className={styles.chartTitle}>Komposisi Penjualan per Kategori</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={chartDataKategori}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ kategori, percent }) => `${kategori} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="total"
-              >
-                {chartDataKategori.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip 
-                formatter={(value) => new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  minimumFractionDigits: 0
-                }).format(value)}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          {kategoriTrend && kategoriTrend.data.length > 0 && kategoriTrend.categories.length > 0 && (
+            <div className={`${styles.chartSection} ${styles.fullWidth}`}>
+              <h3 className={styles.chartTitle}>Tren Penjualan per Kategori</h3>
+              <ResponsiveContainer width="100%" height={350}>
+                <AreaChart data={kategoriTrend.data}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" opacity={0.3} />
+                  <XAxis dataKey="bulan" stroke="#94a3b8" />
+                  <YAxis tickFormatter={formatCurrency} stroke="#94a3b8" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'var(--surface)', 
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value) => new Intl.NumberFormat('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                      minimumFractionDigits: 0
+                    }).format(value)}
+                  />
+                  <Legend />
+                  {kategoriTrend.categories.map((kategori, index) => (
+                    <Area
+                      key={kategori}
+                      type="monotone"
+                      dataKey={kategori}
+                      stackId="1"
+                      stroke={COLORS[index % COLORS.length]}
+                      fill={COLORS[index % COLORS.length]}
+                      fillOpacity={0.7}
+                    />
+                  ))}
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
       )}
     </section>
