@@ -2,9 +2,12 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, ComposedChart
 } from 'recharts'
+import { useTheme } from '../contexts/ThemeContext'
 import styles from '../styles/Dashboard.module.css'
 
 function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kategoriTrend, growthRate }) {
+  const { theme } = useTheme()
+  
   const formatCurrency = (value) => {
     if (value >= 1000000) {
       return `${(value / 1000000).toFixed(1)}M`
@@ -30,6 +33,8 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
   }
 
   const COLORS = ['#6366f1', '#06b6d4', '#8b5cf6', '#22c55e', '#f59e0b', '#f43f5e', '#3b82f6', '#a855f7']
+  const gridColor = theme === 'dark' ? '#475569' : '#e2e8f0'
+  const axisColor = theme === 'dark' ? '#94a3b8' : '#64748b'
 
   return (
     <section className={styles.dashboard}>
@@ -99,9 +104,9 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
             </div>
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={chartDataBulan}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" opacity={0.3} />
-                <XAxis dataKey="bulan" stroke="#94a3b8" />
-                <YAxis tickFormatter={formatCurrency} stroke="#94a3b8" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.3} />
+                <XAxis dataKey="bulan" stroke={axisColor} />
+                <YAxis tickFormatter={formatCurrency} stroke={axisColor} />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: 'var(--surface)', 
@@ -133,9 +138,9 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
               <h3 className={styles.chartTitle}>Top 5 Produk Terlaris</h3>
               <ResponsiveContainer width="100%" height={320}>
                 <BarChart data={topProducts} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" opacity={0.3} />
-                  <XAxis type="number" tickFormatter={formatCurrency} stroke="#94a3b8" />
-                  <YAxis dataKey="nama" type="category" width={140} stroke="#94a3b8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.3} />
+                  <XAxis type="number" tickFormatter={formatCurrency} stroke={axisColor} />
+                  <YAxis dataKey="nama" type="category" width={140} stroke={axisColor} />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'var(--surface)', 
@@ -196,9 +201,9 @@ function Dashboard({ stats, chartDataBulan, chartDataKategori, topProducts, kate
               <h3 className={styles.chartTitle}>Tren Penjualan per Kategori</h3>
               <ResponsiveContainer width="100%" height={350}>
                 <AreaChart data={kategoriTrend.data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" opacity={0.3} />
-                  <XAxis dataKey="bulan" stroke="#94a3b8" />
-                  <YAxis tickFormatter={formatCurrency} stroke="#94a3b8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.3} />
+                  <XAxis dataKey="bulan" stroke={axisColor} />
+                  <YAxis tickFormatter={formatCurrency} stroke={axisColor} />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'var(--surface)', 

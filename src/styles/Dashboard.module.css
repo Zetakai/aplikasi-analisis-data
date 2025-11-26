@@ -76,16 +76,22 @@
 .statValue {
   font-size: 1.875rem;
   font-weight: 700;
-  color: var(--text);
   line-height: 1.2;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
   max-width: 100%;
+}
+
+[data-theme="dark"] .statValue {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+[data-theme="light"] .statValue {
+  color: var(--primary);
 }
 
 .chartsGrid {
