@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import * as XLSX from 'xlsx'
 import styles from '../styles/ImportExcel.module.css'
 
@@ -49,10 +48,26 @@ function ImportExcel({ onImport, produk }) {
     const file = e.target.files[0]
     if (!file) return
 
+    // Validate file type
+    const validExtensions = ['.xlsx', '.xls']
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase()
+    if (!validExtensions.includes(fileExtension)) {
+      alert('Format file tidak didukung. Silakan gunakan file .xlsx atau .xls')
+      e.target.value = ''
+      return
+    }
+
     const reader = new FileReader()
+    
+    reader.onerror = () => {
+      alert('Error membaca file. Pastikan file tidak rusak dan dapat dibaca.')
+      e.target.value = ''
+    }
+
     reader.onload = (event) => {
       try {
         const data = new Uint8Array(event.target.result)
+        
         // Read Excel file
         const workbook = XLSX.read(data, { 
           type: 'array',
@@ -60,36 +75,89 @@ function ImportExcel({ onImport, produk }) {
           cellNF: false,
           cellText: false
         })
+        
+        if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+          alert('File Excel tidak memiliki sheet. Pastikan file memiliki data.')
+          e.target.value = ''
+          return
+        }
+
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+        
         // Convert to JSON - dates will be Date objects when cellDates is true
         const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
           raw: true, // Get raw values (dates will be Date objects or numbers)
           defval: null // Default value for empty cells
         })
 
-        const formattedData = jsonData.map(row => {
+        if (!jsonData || jsonData.length === 0) {
+          alert('File Excel tidak memiliki data. Pastikan ada data di sheet pertama.')
+          e.target.value = ''
+          return
+        }
+
+        // Log first row to help debug column mapping
+        console.log('Sample row from Excel:', jsonData[0])
+        console.log('Total rows in Excel:', jsonData.length)
+
+        const formattedData = jsonData.map((row, index) => {
           // Get date value - try multiple column names
-          const dateValue = row['Tanggal'] || row['tanggal'] || row['Date'] || row['TANGGAL']
+          const dateValue = row['Tanggal'] || row['tanggal'] || row['Date'] || row['TANGGAL'] || row['DATE']
+          
+          // Try multiple column name variations
+          const namaProduk = row['Nama Produk'] || row['namaProduk'] || row['Nama'] || row['NAMA'] || row['nama'] || row['Produk'] || row['produk'] || ''
+          const kategori = row['Kategori'] || row['kategori'] || row['CATEGORY'] || row['Category'] || ''
+          const jumlah = parseInt(row['Jumlah'] || row['jumlah'] || row['Qty'] || row['qty'] || row['QUANTITY'] || row['Quantity'] || 0)
+          const harga = parseFloat(row['Harga'] || row['harga'] || row['Price'] || row['price'] || row['PRICE'] || 0)
+          const bulan = row['Bulan'] || row['bulan'] || row['Month'] || row['MONTH'] || new Date().toLocaleString('id-ID', { month: 'long' })
           
           return {
-            namaProduk: row['Nama Produk'] || row['namaProduk'] || row['Nama'] || '',
-            kategori: row['Kategori'] || row['kategori'] || '',
-            jumlah: parseInt(row['Jumlah'] || row['jumlah'] || row['Qty'] || 0),
-            harga: parseFloat(row['Harga'] || row['harga'] || row['Price'] || 0),
-            bulan: row['Bulan'] || row['bulan'] || row['Month'] || new Date().toLocaleString('id-ID', { month: 'long' }),
+            namaProduk,
+            kategori,
+            jumlah,
+            harga,
+            bulan,
             tanggal: parseExcelDate(dateValue)
           }
-        }).filter(item => item.namaProduk && item.jumlah > 0)
+        })
 
-        if (formattedData.length > 0) {
-          onImport(formattedData)
+        // Filter out invalid rows but keep track
+        const validData = formattedData.filter(item => {
+          const hasNama = item.namaProduk && item.namaProduk.trim() !== ''
+          const hasJumlah = !isNaN(item.jumlah) && item.jumlah > 0
+          return hasNama && hasJumlah
+        })
+
+        const invalidCount = formattedData.length - validData.length
+
+        if (validData.length === 0) {
+          alert(`Tidak ada data valid yang dapat diimport.\n\n` +
+                 `Total baris: ${formattedData.length}\n` +
+                 `Pastikan file memiliki kolom: Nama Produk, Jumlah (dan Harga, Kategori jika ada).\n\n` +
+                 `Kolom yang ditemukan: ${Object.keys(jsonData[0] || {}).join(', ')}`)
+          e.target.value = ''
+          return
+        }
+
+        if (invalidCount > 0) {
+          console.warn(`${invalidCount} baris diabaikan karena tidak valid (nama produk atau jumlah kosong/0)`)
+        }
+
+        console.log(`Importing ${validData.length} valid rows out of ${formattedData.length} total rows`)
+        
+        onImport(validData)
+        
+        if (invalidCount > 0) {
+          alert(`${validData.length} data berhasil diimport.\n${invalidCount} baris diabaikan karena tidak valid.`)
         }
       } catch (error) {
-        alert('Error membaca file Excel: ' + error.message)
+        console.error('Error importing Excel:', error)
+        alert('Error membaca file Excel:\n' + error.message + '\n\nPastikan file format Excel valid (.xlsx atau .xls)')
+        e.target.value = ''
       }
     }
+    
     reader.readAsArrayBuffer(file)
-    e.target.value = ''
   }
 
   return (
