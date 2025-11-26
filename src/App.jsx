@@ -4,7 +4,7 @@ import Dashboard from './components/Dashboard'
 import ImportExcel from './components/ImportExcel'
 import DataTable from './components/DataTable'
 import FormPenjualan from './components/FormPenjualan'
-import { calculateStatistics } from './utils/statistics'
+import { calculateStatistics, getChartDataByBulan, getChartDataByKategori } from './utils/statistics'
 import styles from './styles/App.module.css'
 
 function App() {
@@ -90,12 +90,18 @@ function App() {
   })
 
   const stats = calculateStatistics(filteredPenjualan)
+  const chartDataBulan = getChartDataByBulan(filteredPenjualan)
+  const chartDataKategori = getChartDataByKategori(filteredPenjualan)
 
   return (
     <div className={styles.app}>
       <Header />
       <main className={styles.main}>
-        <Dashboard stats={stats} />
+        <Dashboard 
+          stats={stats} 
+          chartDataBulan={chartDataBulan}
+          chartDataKategori={chartDataKategori}
+        />
         
         <section className={styles.section}>
           <div className={styles.sectionHeader}>

@@ -47,6 +47,19 @@
   line-height: 1.2;
 }
 
+.chartSection {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
 @media (max-width: 768px) {
   .dashboard {
     padding: 1.5rem;
@@ -59,6 +72,11 @@
 
   .statValue {
     font-size: 1.5rem;
+  }
+
+  .chartSection {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
   }
 }
 
