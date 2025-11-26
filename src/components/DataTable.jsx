@@ -116,9 +116,7 @@ function DataTable({ data, filter, onFilterChange, onEdit, onDelete }) {
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        if (item && item.id) {
-                          onDelete(item.id)
-                        }
+                        onDelete(item.id)
                       }}
                       className={styles.btnDelete}
                       title="Hapus"

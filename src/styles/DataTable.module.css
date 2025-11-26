@@ -138,6 +138,8 @@
 .actions {
   display: flex;
   gap: 0.5rem;
+  position: relative;
+  z-index: 1000;
 }
 
 .btnEdit,
@@ -151,13 +153,16 @@
   font-size: 1.1rem;
   line-height: 1;
   position: relative;
-  z-index: 100;
+  z-index: 1001;
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 32px;
   min-height: 32px;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .btnEdit:hover {

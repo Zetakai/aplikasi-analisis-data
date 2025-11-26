@@ -71,10 +71,27 @@ function App() {
     const confirmed = window.confirm('Yakin ingin menghapus data ini?')
     if (confirmed) {
       setPenjualan(prevPenjualan => {
-        const filtered = prevPenjualan.filter(item => item.id !== id)
-        return filtered
+        // Convert both to string for comparison to handle type mismatches
+        const idStr = String(id)
+        return prevPenjualan.filter(item => String(item.id) !== idStr)
       })
       showNotification('Data penjualan berhasil dihapus')
+    }
+  }
+
+  const handleDeleteAll = () => {
+    if (penjualan.length === 0) {
+      showNotification('Tidak ada data untuk dihapus', 'error')
+      return
+    }
+    
+    const count = penjualan.length
+    const confirmMessage = `Yakin ingin menghapus SEMUA data penjualan (${count} item)?\n\nTindakan ini TIDAK DAPAT DIBATALKAN!`
+    
+    const confirmed = window.confirm(confirmMessage)
+    if (confirmed) {
+      setPenjualan([])
+      showNotification(`Semua data (${count} item) berhasil dihapus`)
     }
   }
 
@@ -155,7 +172,19 @@ function App() {
         
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2>Data Penjualan</h2>
+            <div>
+              <h2>Data Penjualan</h2>
+              {penjualan.length > 0 && (
+                <button
+                  type="button"
+                  className={styles.btnDanger}
+                  onClick={handleDeleteAll}
+                  title="Hapus semua data"
+                >
+                  Hapus Semua Data
+                </button>
+              )}
+            </div>
             <div className={styles.actionButtons}>
               <button 
                 className={styles.btnSecondary}
