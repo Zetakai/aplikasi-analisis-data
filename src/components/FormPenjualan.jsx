@@ -64,6 +64,20 @@ function FormPenjualan({ produk, penjualan, editingItem, onSubmit, onCancel }) {
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ]
 
+  // Helper function to get month name from date string
+  const getMonthFromDate = (dateString) => {
+    if (!dateString) return new Date().toLocaleString('id-ID', { month: 'long' })
+    try {
+      const date = new Date(dateString)
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleString('id-ID', { month: 'long' })
+      }
+    } catch (e) {
+      // If parsing fails, return current month
+    }
+    return new Date().toLocaleString('id-ID', { month: 'long' })
+  }
+
   const kategoriFromProduk = produk.map(p => p.kategori).filter(Boolean)
   const kategoriFromPenjualan = penjualan.map(p => p.kategori).filter(Boolean)
   const kategoriOptions = [...new Set([...kategoriFromProduk, ...kategoriFromPenjualan])]
@@ -204,7 +218,11 @@ function FormPenjualan({ produk, penjualan, editingItem, onSubmit, onCancel }) {
             <input
               type="date"
               value={formData.tanggal}
-              onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
+              onChange={(e) => {
+                const newTanggal = e.target.value
+                const newBulan = getMonthFromDate(newTanggal)
+                setFormData({ ...formData, tanggal: newTanggal, bulan: newBulan })
+              }}
               className={styles.input}
               required
             />
