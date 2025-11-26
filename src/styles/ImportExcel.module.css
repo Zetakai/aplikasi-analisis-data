@@ -1,0 +1,105 @@
+.importSection {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.importControls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.fileInputLabel {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.fileInputLabel:hover {
+  border-color: var(--primary);
+  background: #f0f7ff;
+}
+
+.fileInput {
+  display: none;
+}
+
+.btnSecondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.btnSecondary:hover {
+  background: #f1f5f9;
+  border-color: var(--primary);
+}
+
+.produkForm {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border-radius: 8px;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.produkForm .input {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.produkForm .input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.produkForm .btnPrimary {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .importControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fileInputLabel,
+  .btnSecondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .produkForm {
+    flex-direction: column;
+  }
+
+  .produkForm .input {
+    width: 100%;
+  }
+}
+
